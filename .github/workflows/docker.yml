@@ -107,10 +107,11 @@ jobs:
         context: .                                     # Dossier contenant le code
         file: ./Dockerfile                             # Fichier de recette Docker
         push: false                                    # Ne pas publier (juste construire localement)
-        tags: |                                        # Étiquettes pour identifier l'image
-          simplonwars-farm-nodejs:latest              # Étiquette locale
+        load: true                                     # Charger l'image dans Docker local
+        tags: simplonwars-farm-nodejs:latest          # Étiquette locale
         # NOTE: Pour publier, décommentez les lignes suivantes et configurez les secrets :
         # push: true
+        # load: false
         # tags: |
         #   jamtur01/simplonwars-farm-nodejs:latest           # Étiquette Docker Hub
         #   ghcr.io/jamtur01/simplonwars-farm-nodejs:latest   # Étiquette GitHub Container Registry
