@@ -96,17 +96,19 @@ SimplonWars-farm-nodejs/
 ├── .dockerignore          # Fichier d'exclusion Docker
 ├── .gitignore             # Fichier d'exclusion Git
 ├── README.md              # Ce fichier
+├── tuto.md               # Tutoriel complet détaillé
 ├── public/                # Fichiers statiques
 │   ├── index.html         # HTML de l'intro Star Wars
 │   ├── css/
 │   │   └── style.css      # Styles de l'intro Star Wars
 │   └── fonts/             # Dossier des polices
 ├── test/                  # Fichiers de tests
-│   └── test.js            # Suite de tests
+│   └── test.js            # Suite de tests robuste
 └── .github/               # Configuration GitHub
     └── workflows/         # Pipelines GitHub Actions
         ├── test.yml       # Pipeline de tests
-        └── docker.yml     # Pipeline Docker
+        ├── docker.yml     # Pipeline Docker
+        └── deploy.yml     # Pipeline GitHub Pages
 ```
 
 ## 🧪 Tests
@@ -116,6 +118,20 @@ Vous pouvez également exécuter les tests via `npm` :
 ```shell
 npm test
 ```
+
+### ✅ Tests disponibles
+
+- **Tests de routage** : Vérification de toutes les routes API
+- **Tests de contenu** : Validation du contenu des réponses
+- **Tests d'API** : Vérification des endpoints JSON
+- **Tests de documentation** : Validation de Swagger UI
+- **Tests robustes** : Acceptent l'animation Star Wars ou le texte George Orwell
+
+### 🔧 Résolution des problèmes de tests
+
+Si vous rencontrez des erreurs :
+- **Port occupé** : Utilisez `netstat -ano | findstr :8080` pour identifier le processus
+- **Tests qui échouent** : Vérifiez que l'application fonctionne avec `npm start`
 
 ## 🐳 Docker
 
@@ -129,14 +145,39 @@ docker build -t simplonwars-farm-nodejs .
 docker run -p 8080:8080 simplonwars-farm-nodejs
 ```
 
+### 🔧 Configuration Docker
+
+- **Image optimisée** : Basée sur Node.js Alpine pour une taille réduite
+- **Port exposé** : 8080 pour l'application
+- **Variables d'environnement** : Configurables via Docker
+- **CI/CD intégré** : Construction automatique via GitHub Actions
+
+### 🚀 Déploiement Docker
+
+Le pipeline CI/CD construit automatiquement l'image Docker :
+- **Construction locale** : `push: false` par défaut (sécurité)
+- **Publication optionnelle** : Configurable avec les secrets GitHub
+
 ## 🔄 CI/CD
 
 Ce projet utilise GitHub Actions pour :
 
 - **Tests automatiques** : Vérification automatique du code à chaque push
 - **Build Docker** : Construction automatique d'images Docker
-- **Déploiement** : Publication automatique sur Docker Hub et GitHub Container Registry
+- **Déploiement GitHub Pages** : Site web automatique avec documentation
 - **Documentation API** : Génération automatique de la documentation Swagger
+
+### 📊 Pipelines disponibles
+
+- **Tests** (`.github/workflows/test.yml`) : Lance les tests automatiquement
+- **Docker** (`.github/workflows/docker.yml`) : Construit l'image Docker
+- **GitHub Pages** (`.github/workflows/deploy.yml`) : Déploie le site web
+
+### 🌐 Site web déployé
+
+Le projet est automatiquement déployé sur GitHub Pages :
+- **URL** : https://jamtur01.github.io/SimplonWars-farm-nodejs/
+- **Contenu** : Documentation complète, présentation de l'API, guide d'utilisation
 
 ## 🎓 Apprentissage
 

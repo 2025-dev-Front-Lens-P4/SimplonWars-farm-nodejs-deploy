@@ -11,7 +11,9 @@
 7. [Création des tests](#7-création-des-tests)
 8. [Configuration Docker](#8-configuration-docker)
 9. [Mise en place CI/CD](#9-mise-en-place-cicd)
-10. [Lancement et test](#10-lancement-et-test)
+10. [Déploiement GitHub Pages](#10-déploiement-github-pages)
+11. [Lancement et test](#11-lancement-et-test)
+12. [Résolution des problèmes](#12-résolution-des-problèmes)
 
 ---
 
@@ -1449,18 +1451,151 @@ jobs:
 #    tags: |
 #      votre-username/simplonwars-farm-nodejs:latest
 #      ghcr.io/votre-username/simplonwars-farm-nodejs:latest
-```
 
 ---
 
-## 10. Lancement et test
+## 10. Déploiement GitHub Pages
 
-### 10.1 Lancer l'application
+### 10.1 Qu'est-ce que GitHub Pages ?
+
+**GitHub Pages** est un service gratuit qui permet d'héberger des sites web statiques directement depuis votre repository GitHub. C'est parfait pour :
+- Présenter votre projet
+- Créer une documentation en ligne
+- Avoir un site web professionnel
+- Montrer vos compétences
+
+### 10.2 Configuration du pipeline de déploiement
+
+#### **Fichier de workflow :** `.github/workflows/deploy.yml`
+
+```yaml
+# =====================================================
+# GITHUB ACTIONS - DÉPLOIEMENT GITHUB PAGES
+# =====================================================
+
+name: Deploy to GitHub Pages
+
+# Déclencheurs
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Tests and Build"]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # Permissions nécessaires pour GitHub Pages
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Create static site
+      run: |
+        mkdir -p docs
+        # Création du site statique...
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        force_orphan: true
+```
+
+### 10.3 Création du site statique
+
+Le pipeline crée automatiquement un site web avec :
+
+#### **Page d'accueil moderne**
+- Design responsive avec thème Star Wars
+- Présentation de l'API et de ses endpoints
+- Interface utilisateur intuitive
+- Couleurs et animations cohérentes
+
+#### **Contenu généré**
+- Documentation complète de l'API
+- Liste de tous les endpoints disponibles
+- Exemples d'utilisation
+- Liens vers le code source et la documentation Swagger
+
+### 10.4 Activation de GitHub Pages
+
+#### **Étapes de configuration :**
+
+1. **Aller dans les paramètres du repository** :
+   - GitHub > Votre repository > Settings
+
+2. **Configurer GitHub Pages** :
+   - Section "Pages" dans le menu de gauche
+   - Source : "Deploy from a branch"
+   - Branch : "gh-pages"
+   - Folder : "/(root)"
+
+3. **Vérifier l'activation** :
+   - Le site sera accessible après le premier déploiement
+   - URL : `https://votre-username.github.io/votre-repo`
+
+### 10.5 Surveillance du déploiement
+
+#### **Vérifier le statut :**
+1. **Onglet Actions** : Voir les pipelines en cours
+2. **Onglet Settings > Pages** : Voir l'état du déploiement
+3. **Branche gh-pages** : Voir les fichiers déployés
+
+#### **Logs de déploiement :**
+```bash
+# Voir les actions récentes
+gh run list
+
+# Voir les détails d'une action
+gh run view [ID]
+```
+
+### 10.6 Personnalisation du site
+
+#### **Modifier le design :**
+Le site est généré dans l'étape "Create static site" du pipeline. Vous pouvez :
+
+1. **Changer les couleurs** : Modifier le CSS dans le workflow
+2. **Ajouter du contenu** : Modifier le HTML généré
+3. **Changer la structure** : Réorganiser les sections
+
+#### **Ajouter des fonctionnalités :**
+- Formulaire de contact
+- Galerie d'images
+- Blog intégré
+- Statistiques d'utilisation
+
+---
+
+## 11. Lancement et test
+
+### 11.1 Lancer l'application
 ```bash
 npm start
 ```
 
-### 10.2 Tester toutes les routes
+### 11.2 Tester toutes les routes
 - **Page d'accueil** : http://localhost:8080/
 - **Intro Star Wars** : http://localhost:8080/starwars
 - **Documentation API** : http://localhost:8080/api-docs
@@ -1471,9 +1606,75 @@ npm start
 - **Statistiques** : http://localhost:8080/api/stats
 - **Recherche** : http://localhost:8080/api/search/ban
 
-### 10.3 Lancer les tests
+### 11.3 Lancer les tests
 ```bash
 npm test
+```
+
+---
+
+## 12. Résolution des problèmes
+
+### 12.1 Problèmes de tests
+
+#### **Erreur "port already in use"**
+```bash
+# Identifier le processus qui utilise le port
+netstat -ano | findstr :8080  # Windows
+lsof -i :8080                 # Linux/Mac
+
+# Tuer le processus
+taskkill /PID [PID] /F        # Windows
+kill -9 [PID]                 # Linux/Mac
+```
+
+#### **Tests qui échouent**
+- **Problème de routage** : Vérifier que les routes sont correctement définies
+- **Problème de contenu** : Les tests acceptent maintenant l'animation Star Wars ou le texte George Orwell
+- **Problème Swagger** : Le test accepte les codes 200 et 301
+
+### 12.2 Problèmes Docker
+
+#### **Erreur de permissions**
+```bash
+# Windows : Exécuter en tant qu'administrateur
+# Linux/Mac : Ajouter l'utilisateur au groupe docker
+sudo usermod -aG docker $USER
+```
+
+#### **Erreur de build**
+```bash
+# Nettoyer le cache Docker
+docker system prune -a
+
+# Reconstruire l'image
+docker build --no-cache -t simplonwars-farm-nodejs .
+```
+
+### 12.3 Problèmes CI/CD
+
+#### **Erreur 403 sur GitHub Pages**
+- Vérifier que les permissions sont configurées dans le workflow
+- S'assurer que GitHub Pages est activé dans les paramètres du repository
+
+#### **Erreur de connexion Docker Hub**
+- Les connexions aux registres sont désactivées par défaut
+- Pour activer : configurer les secrets GitHub et décommenter les étapes
+
+### 12.4 Problèmes de déploiement
+
+#### **Site GitHub Pages ne s'affiche pas**
+1. Vérifier que la branche `gh-pages` a été créée
+2. Vérifier les paramètres GitHub Pages
+3. Attendre quelques minutes pour la propagation
+
+#### **Erreur de permissions GitHub Actions**
+```yaml
+# Ajouter dans le workflow
+permissions:
+  contents: write
+  pages: write
+  id-token: write
 ```
 
 ---
@@ -1483,9 +1684,10 @@ npm test
 Vous avez créé une application Node.js complète avec :
 - ✅ API REST avec 8 endpoints
 - ✅ Documentation Swagger interactive
-- ✅ Tests automatisés
+- ✅ Tests automatisés robustes
 - ✅ Configuration Docker
-- ✅ Pipeline CI/CD
+- ✅ Pipeline CI/CD complet
+- ✅ Déploiement GitHub Pages
 - ✅ Architecture propre et maintenable
 
 ---
@@ -1536,6 +1738,16 @@ curl http://localhost:8080/api
    - ❌ **Rouge** : Il y a un problème à corriger
    - ⏳ **Jaune** : Pipeline en cours d'exécution
 
+### **4. Vérification GitHub Pages**
+1. **Vérifier le déploiement** :
+   - Settings > Pages > Voir l'URL du site
+   - Le site devrait être accessible en ligne
+
+2. **Tester le site** :
+   - Vérifier que toutes les sections s'affichent
+   - Tester les liens vers l'API
+   - Vérifier le design responsive
+
 ---
 
 ## 🚀 Prochaines étapes
@@ -1562,6 +1774,12 @@ curl http://localhost:8080/api
    - Métriques de performance
    - Alertes automatiques
 
+5. **Améliorer GitHub Pages** :
+   - Ajouter un blog intégré
+   - Statistiques d'utilisation
+   - Formulaire de contact
+   - Galerie de projets
+
 ### **Concepts à explorer :**
 
 - **Microservices** : Diviser l'application en services indépendants
@@ -1578,11 +1796,13 @@ curl http://localhost:8080/api
 - [Documentation Swagger](https://swagger.io/)
 - [Documentation Docker](https://docs.docker.com/)
 - [Documentation GitHub Actions](https://docs.github.com/en/actions)
+- [Documentation GitHub Pages](https://docs.github.com/en/pages)
 
 ### **Tutoriels recommandés :**
 - [Node.js Best Practices](https://github.com/goldbergyoni/nodebestpractices)
 - [Docker Tutorial](https://docs.docker.com/get-started/)
 - [GitHub Actions Tutorial](https://docs.github.com/en/actions/learn-github-actions)
+- [GitHub Pages Tutorial](https://docs.github.com/en/pages/getting-started-with-github-pages)
 
 ### **Outils utiles :**
 - [Postman](https://www.postman.com/) : Tester les APIs
