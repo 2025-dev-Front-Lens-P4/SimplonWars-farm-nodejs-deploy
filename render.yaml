@@ -1,0 +1,20 @@
+# =====================================================
+# RENDER.YAML - CONFIGURATION DE DÉPLOIEMENT RENDER
+# =====================================================
+# 
+# Ce fichier configure le déploiement automatique sur Render
+# Il définit comment Render doit construire et déployer l'application
+
+services:
+  # Service principal - Application Node.js
+  - type: web
+    name: simplonwars-app
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheckPath: /
+    autoDeploy: true 
