@@ -50,6 +50,14 @@ jobs:
     # On utilise Ubuntu pour le déploiement
     runs-on: ubuntu-latest
     
+    # 🔐 PERMISSIONS NÉCESSAIRES
+    # ---------------------------
+    # Permissions pour pouvoir pousser sur la branche gh-pages
+    permissions:
+      contents: write      # Permission d'écrire dans le repository
+      pages: write         # Permission d'écrire sur GitHub Pages
+      id-token: write      # Permission pour l'authentification
+    
     # 📋 CONDITIONS D'EXÉCUTION
     # --------------------------
     # On ne déploie que si les tests ont réussi
@@ -309,4 +317,7 @@ jobs:
         force_orphan: true                         # Forcer la création d'une nouvelle branche
         user_name: 'github-actions[bot]'           # Nom de l'utilisateur pour les commits
         user_email: 'github-actions[bot]@users.noreply.github.com'  # Email pour les commits
-        commit_message: '🚀 Deploy to GitHub Pages'  # Message de commit 
+        commit_message: '🚀 Deploy to GitHub Pages'  # Message de commit
+        # Configuration de sécurité pour éviter les erreurs 403
+        enable_jekyll: false                       # Désactiver Jekyll (pas nécessaire pour un site statique)
+        cname: ''                                  # Pas de domaine personnalisé 
