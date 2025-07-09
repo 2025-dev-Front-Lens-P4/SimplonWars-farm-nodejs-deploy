@@ -74,10 +74,17 @@ node app.js
 
 ### 🌟 Intro Star Wars
 
-- Séquence d'intro animée style Star Wars
-- Design responsive pour les appareils mobiles
-- Animations CSS avec keyframes
-- Typographie et style personnalisés
+* Séquence d'intro animée style Star Wars
+* Design responsive pour les appareils mobiles
+* Animations CSS avec keyframes
+* Typographie et style personnalisés
+
+#### 💡 Astuce : Ralentir le défilement du texte
+Pour ralentir l'animation du texte défilant :
+- Ouvrez `public/css/style.css`
+- Modifiez la durée de l'animation dans `.star-wars-intro .title-content` (ex : `animation: scroll 180s linear 4s forwards;`)
+- Plus la valeur est grande, plus le texte défile lentement
+- Adaptez aussi la règle dans le `@media` pour mobile si besoin
 
 ### 📚 Documentation API
 
@@ -176,7 +183,7 @@ Ce projet utilise GitHub Actions pour :
 ### 🌐 Site web déployé
 
 Le projet est automatiquement déployé sur GitHub Pages :
-- **URL** : https://jamtur01.github.io/SimplonWars-farm-nodejs/
+- **URL** : https://2025-dev-Front-Lens-P4.github.io/SimplonWars-farm-nodejs-deploy/
 - **Contenu** : Documentation complète, présentation de l'API, guide d'utilisation
 
 ## 🎓 Apprentissage

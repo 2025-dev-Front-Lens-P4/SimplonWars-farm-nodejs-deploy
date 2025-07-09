@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "name": "simplonwars-farm-api",
+  "builds": [
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/starwars",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/api-docs",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/public/fonts/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+} 

@@ -1,0 +1,94 @@
+# =====================================================
+# GITHUB ACTIONS - DÉPLOIEMENT VERCEL
+# =====================================================
+#
+# 🌐 QU'EST-CE QUE CE FICHIER ?
+# ------------------------------
+# Ce pipeline automatise le déploiement de votre application sur Vercel.
+# Vercel peut déployer des applications Node.js complètes, contrairement à GitHub Pages.
+#
+# 🎯 POURQUOI VERCEL ?
+# --------------------
+# Vercel permet de :
+# - Déployer des applications Node.js complètes
+# - Avoir des API routes en temps réel
+# - Déployer automatiquement à chaque push
+# - Avoir HTTPS automatique
+# - Avoir un CDN global
+#
+# 🔄 COMMENT ÇA MARCHE ?
+# -----------------------
+# 1. Vous poussez du code sur GitHub
+# 2. Le robot déploie sur Vercel
+# 3. Votre API est accessible en ligne avec toutes ses routes
+# 4. L'animation Star Wars et l'API fonctionnent parfaitement
+
+name: Deploy to Vercel
+
+# 🚀 DÉCLENCHEURS - QUAND DÉPLOYER ?
+# -----------------------------------
+on:
+  push:
+    branches:
+      - main          # Se déclenche seulement sur la branche principale
+  workflow_run:
+    workflows: ["Tests and Build"]  # Se déclenche après les tests
+    types:
+      - completed
+
+# 🏗️ JOBS - TRAVAUX À EFFECTUER
+# ------------------------------
+jobs:
+  # Job principal : déployer sur Vercel
+  deploy:
+    # 🖥️ ENVIRONNEMENT D'EXÉCUTION
+    # -----------------------------
+    runs-on: ubuntu-latest
+    
+    # 📋 CONDITIONS D'EXÉCUTION
+    # --------------------------
+    # On ne déploie que si les tests ont réussi
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+    
+    # 📋 ÉTAPES - ACTIONS À EFFECTUER
+    # --------------------------------
+    steps:
+    
+    # ÉTAPE 1 : RÉCUPÉRER LE CODE
+    # ----------------------------
+    # On télécharge le code depuis GitHub
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    # ÉTAPE 2 : CONFIGURER NODE.JS
+    # -----------------------------
+    # On installe Node.js pour pouvoir tester l'application
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'        # Version de Node.js à utiliser
+        cache: 'npm'              # Cache les dépendances npm
+        
+    # ÉTAPE 3 : INSTALLER LES DÉPENDANCES
+    # ------------------------------------
+    # On installe toutes les dépendances du projet
+    - name: Install dependencies
+      run: npm ci                  # Installation propre des dépendances
+      
+    # ÉTAPE 4 : LANCER LES TESTS
+    # ---------------------------
+    # On s'assure que tout fonctionne avant le déploiement
+    - name: Run tests
+      run: npm test               # Lance tous les tests
+      
+    # ÉTAPE 5 : DÉPLOYER SUR VERCEL
+    # ------------------------------
+    # On déploie l'application sur Vercel
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}        # Token Vercel (à configurer)
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}      # ID de l'organisation Vercel
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # ID du projet Vercel
+        vercel-args: '--prod'                           # Déploiement en production
+        working-directory: ./                           # Dossier de travail 

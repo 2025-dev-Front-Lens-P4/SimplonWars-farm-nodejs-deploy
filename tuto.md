@@ -12,8 +12,9 @@
 8. [Configuration Docker](#8-configuration-docker)
 9. [Mise en place CI/CD](#9-mise-en-place-cicd)
 10. [Déploiement GitHub Pages](#10-déploiement-github-pages)
-11. [Lancement et test](#11-lancement-et-test)
-12. [Résolution des problèmes](#12-résolution-des-problèmes)
+11. [Déploiement Vercel (Alternative complète)](#11-déploiement-vercel-alternative-complète)
+12. [Lancement et test](#12-lancement-et-test)
+13. [Résolution des problèmes](#13-résolution-des-problèmes)
 
 ---
 
@@ -454,9 +455,7 @@ Remplacez le contenu de `package.json` par :
   "version": "0.0.1",
   "dependencies": {
     "express": "4.x",
-    "underscore": "^1.12.1",
-    "swagger-ui-express": "^4.15.5",
-    "swagger-jsdoc": "^6.2.8"
+    "underscore": "^1.12.1"
   },
   "scripts": {
     "test": "nyc --reporter=html mocha --exit",
@@ -1588,14 +1587,244 @@ Le site est généré dans l'étape "Create static site" du pipeline. Vous pouve
 
 ---
 
-## 11. Lancement et test
+## 11. Déploiement Vercel (Alternative complète)
 
-### 11.1 Lancer l'application
+### 11.1 Pourquoi choisir Vercel ?
+
+Vercel est une plateforme de déploiement moderne qui offre des avantages uniques :
+
+#### **Avantages de Vercel vs GitHub Pages**
+
+| Fonctionnalité | GitHub Pages | Vercel |
+|----------------|--------------|--------|
+| **Fichiers statiques** | ✅ | ✅ |
+| **Applications Node.js** | ❌ | ✅ |
+| **API Routes** | ❌ | ✅ |
+| **HTTPS automatique** | ✅ | ✅ |
+| **CDN global** | ✅ | ✅ |
+| **Déploiement automatique** | ✅ | ✅ |
+| **Fonctions serverless** | ❌ | ✅ |
+
+#### **Pourquoi Vercel pour votre projet ?**
+- ✅ **API complète** : Tous vos endpoints `/api/*` fonctionnent
+- ✅ **Animation Star Wars** : Page d'accueil interactive
+- ✅ **Documentation Swagger** : Interface interactive en ligne
+- ✅ **Performance optimale** : CDN global
+- ✅ **HTTPS automatique** : Sécurité garantie
+
+### 11.2 Configuration Vercel
+
+#### **Étape 1 : Créer un compte Vercel**
+
+1. Allez sur [vercel.com](https://vercel.com)
+2. Cliquez sur "Sign Up"
+3. Connectez-vous avec votre compte GitHub
+4. Autorisez Vercel à accéder à vos repositories
+
+#### **Étape 2 : Fichier de configuration**
+
+Le fichier `vercel.json` est déjà créé dans votre projet :
+
+```json
+{
+  "version": 2,
+  "name": "simplonwars-farm-api",
+  "builds": [
+    {
+      "src": "app.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/starwars",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/api-docs",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/css/(.*)",
+      "dest": "/public/css/$1"
+    },
+    {
+      "src": "/fonts/(.*)",
+      "dest": "/public/fonts/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
+```
+
+#### **Étape 3 : Importer le projet**
+
+1. Dans Vercel, cliquez sur "New Project"
+2. Sélectionnez votre repository GitHub
+3. Vercel détectera automatiquement que c'est un projet Node.js
+4. Cliquez sur "Deploy"
+
+### 11.3 Déploiement automatique avec GitHub Actions
+
+#### **Configuration des secrets GitHub**
+
+1. **Installer Vercel CLI** :
+   ```bash
+   npm i -g vercel
+   ```
+
+2. **Se connecter à Vercel** :
+   ```bash
+   vercel login
+   ```
+
+3. **Récupérer les informations** :
+   ```bash
+   vercel whoami
+   ```
+
+4. **Ajouter les secrets dans GitHub** :
+   - Allez dans votre repo GitHub → Settings → Secrets
+   - Ajoutez ces secrets :
+     - `VERCEL_TOKEN` : Token Vercel
+     - `VERCEL_ORG_ID` : ID de votre organisation
+     - `VERCEL_PROJECT_ID` : ID de votre projet
+
+#### **Workflow GitHub Actions**
+
+Le fichier `.github/workflows/deploy-vercel.yml` est déjà configuré :
+
+```yaml
+name: Deploy to Vercel
+
+on:
+  push:
+    branches:
+      - main
+  workflow_run:
+    workflows: ["Tests and Build"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Run tests
+      run: npm test
+      
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+        working-directory: ./
+```
+
+### 11.4 URLs de production
+
+Après déploiement, vous aurez :
+
+- **Page d'accueil** : `https://votre-projet.vercel.app/`
+- **Animation Star Wars** : `https://votre-projet.vercel.app/starwars`
+- **Documentation API** : `https://votre-projet.vercel.app/api-docs`
+- **API Endpoints** : `https://votre-projet.vercel.app/api/*`
+
+### 11.5 Tester l'API en production
+
+Vos endpoints seront accessibles en production :
+
+```bash
+# Tous les animaux
+curl https://votre-projet.vercel.app/api
+
+# Animal aléatoire
+curl https://votre-projet.vercel.app/api/random
+
+# 3 animaux aléatoires
+curl https://votre-projet.vercel.app/api/random/3
+
+# Animaux de Tatooine
+curl https://votre-projet.vercel.app/api/planet/Tatooine
+
+# Statistiques
+curl https://votre-projet.vercel.app/api/stats
+
+# Recherche
+curl https://votre-projet.vercel.app/api/search/ban
+```
+
+### 11.6 Commandes Vercel utiles
+
+```bash
+# Déployer manuellement
+vercel
+
+# Déployer en production
+vercel --prod
+
+# Voir les logs
+vercel logs
+
+# Voir les domaines
+vercel domains
+
+# Voir les déploiements
+vercel ls
+```
+
+### 11.7 Avantages du déploiement Vercel
+
+#### **Pour votre projet Star Wars :**
+- ✅ **API complète fonctionnelle** : Tous vos endpoints `/api/*` marchent
+- ✅ **Animation Star Wars** : Page d'accueil interactive
+- ✅ **Documentation Swagger** : Interface interactive en ligne
+- ✅ **Performance optimale** : CDN global
+- ✅ **HTTPS automatique** : Sécurité garantie
+- ✅ **Déploiement automatique** : À chaque push sur GitHub
+
+#### **Pour votre formation :**
+- ✅ **Apprentissage complet** : Node.js + API + Déploiement
+- ✅ **Portfolio professionnel** : URL publique avec API fonctionnelle
+- ✅ **Compétences modernes** : Serverless, CI/CD, DevOps
+- ✅ **Prêt pour l'emploi** : Expérience avec des outils professionnels
+
+---
+
+## 12. Lancement et test
+
+### 12.1 Lancer l'application
 ```bash
 npm start
 ```
 
-### 11.2 Tester toutes les routes
+### 12.2 Tester toutes les routes
 - **Page d'accueil** : http://localhost:8080/
 - **Intro Star Wars** : http://localhost:8080/starwars
 - **Documentation API** : http://localhost:8080/api-docs
@@ -1606,16 +1835,16 @@ npm start
 - **Statistiques** : http://localhost:8080/api/stats
 - **Recherche** : http://localhost:8080/api/search/ban
 
-### 11.3 Lancer les tests
+### 12.3 Lancer les tests
 ```bash
 npm test
 ```
 
 ---
 
-## 12. Résolution des problèmes
+## 13. Résolution des problèmes
 
-### 12.1 Problèmes de tests
+### 13.1 Problèmes de tests
 
 #### **Erreur "port already in use"**
 ```bash
@@ -1633,7 +1862,7 @@ kill -9 [PID]                 # Linux/Mac
 - **Problème de contenu** : Les tests acceptent maintenant l'animation Star Wars ou le texte George Orwell
 - **Problème Swagger** : Le test accepte les codes 200 et 301
 
-### 12.2 Problèmes Docker
+### 13.2 Problèmes Docker
 
 #### **Erreur de permissions**
 ```bash
@@ -1651,7 +1880,7 @@ docker system prune -a
 docker build --no-cache -t simplonwars-farm-nodejs .
 ```
 
-### 12.3 Problèmes CI/CD
+### 13.3 Problèmes CI/CD
 
 #### **Erreur 403 sur GitHub Pages**
 - Vérifier que les permissions sont configurées dans le workflow
@@ -1661,7 +1890,7 @@ docker build --no-cache -t simplonwars-farm-nodejs .
 - Les connexions aux registres sont désactivées par défaut
 - Pour activer : configurer les secrets GitHub et décommenter les étapes
 
-### 12.4 Problèmes de déploiement
+### 13.4 Problèmes de déploiement
 
 #### **Site GitHub Pages ne s'affiche pas**
 1. Vérifier que la branche `gh-pages` a été créée
@@ -1688,6 +1917,7 @@ Vous avez créé une application Node.js complète avec :
 - ✅ Configuration Docker
 - ✅ Pipeline CI/CD complet
 - ✅ Déploiement GitHub Pages
+- ✅ Déploiement Vercel (alternative complète)
 - ✅ Architecture propre et maintenable
 
 ---
@@ -1827,3 +2057,32 @@ curl http://localhost:8080/api
 ---
 
 **🎯 Vous êtes maintenant prêt à créer vos propres applications avec CI/CD !** 
+
+---
+
+### 💡 Astuce : Ralentir le défilement du texte Star Wars
+
+Pour ralentir l'animation du texte défilant sur la page d'accueil :
+
+1. Ouvrez le fichier `public/css/style.css`
+2. Repérez la règle suivante :
+   ```css
+   .star-wars-intro .title-content {
+     position: absolute;
+     top: 100%;
+     animation: scroll 180s linear 4s forwards;
+   }
+   ```
+3. Modifiez la valeur `180s` pour ajuster la vitesse (plus la valeur est grande, plus le texte défile lentement)
+4. Pour mobile, adaptez aussi la règle dans le `@media` :
+   ```css
+   @media screen and (max-width: 720px) {
+     .star-wars-intro .title-content {
+       animation: scroll 150s linear 4s forwards;
+     }
+   }
+   ```
+
+Enregistrez et rechargez la page pour voir le résultat !
+
+--- 
