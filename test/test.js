@@ -67,8 +67,7 @@ describe('GET', function(){
   })
 
   // Test du contenu de la page d'accueil
-  // On vérifie que la page contient bien le texte "George Orwell had a farm"
-  // NOTE: Ce test peut échouer si la page d'accueil affiche l'animation Star Wars au lieu du texte
+  // On vérifie que la page contient bien le texte "George Orwell had a farm" ou l'animation Star Wars
   it('respond with George Orwell', function(done){
     request
       .get('/')                    // Requête GET vers '/' (page d'accueil)
@@ -76,13 +75,11 @@ describe('GET', function(){
       .expect(200)                 // Vérifier le code 200
       .end(function(err, res) {
         if (err) return done(err);
-        
-        // Vérifier si le contenu contient soit "George Orwell" soit "Star Wars"
+        // Accepte le texte George Orwell ou la présence de l'animation Star Wars
         const hasGeorgeOrwell = /George Orwell had a farm/ig.test(res.text);
         const hasStarWars = /star-wars-intro/ig.test(res.text);
-        
         if (hasGeorgeOrwell || hasStarWars) {
-          done();                  // Test réussi
+          done();
         } else {
           done(new Error('Page d\'accueil ne contient ni George Orwell ni Star Wars'));
         }
@@ -159,30 +156,20 @@ describe('GET', function(){
   })
 
   // Test avancé : vérification d'un animal Star Wars aléatoire
-  // On vérifie que la page d'accueil contient bien un animal Star Wars
-  // NOTE: Ce test peut échouer si la page d'accueil affiche l'animation Star Wars
+  // On vérifie que la page d'accueil contient bien un animal Star Wars ou l'animation
   it('random animal from / contains Star Wars animal', function(done){
     request
       .get('/')                              // Requête GET vers '/' (page d'accueil)
       .set('Accept', 'text/html')            // Demander du HTML
       .expect(200)                           // Vérifier le code 200
-      .end(function(err, res) {              // .end() : Gérer la réponse manuellement
-        if (err) return done(err);           // Si erreur, arrêter le test
-        
-        // Liste de tous les animaux Star Wars possibles
+      .end(function(err, res) {
+        if (err) return done(err);
         const starWarsAnimals = ['bantha', 'tauntaun', 'nerf', 'eopie', 'blurrg', 'porg', 'fathier', 'taq', 'reek', 'dewback', 'nunas', 'varactyl', 'happabore'];
-        
-        // Vérifier si au moins un animal Star Wars est présent dans la réponse
-        // .some() : Retourne true si au moins un élément correspond à la condition
         const hasStarWarsAnimal = starWarsAnimals.some(animal => res.text.includes(animal));
-        
-        // Vérifier si c'est la page Star Wars (dans ce cas, le test est valide aussi)
         const isStarWarsPage = /star-wars-intro/ig.test(res.text);
-        
         if (hasStarWarsAnimal || isStarWarsPage) {
-          done();                            // Test réussi : un animal Star Wars a été trouvé ou c'est la page Star Wars
+          done();
         } else {
-          // Test échoué : aucun animal Star Wars trouvé
           done(new Error('No Star Wars animal found in response'));
         }
       });
@@ -194,19 +181,20 @@ describe('GET', function(){
   
   // Test de la documentation Swagger
   // On vérifie que la documentation interactive fonctionne
-  // NOTE: Swagger peut rediriger, donc on accepte 200 ou 301
+  // Accepte 200 (OK) ou 301 (Moved Permanently)
   it('/api-docs responds with html (Swagger UI)', function(done){
     request
       .get('/api-docs')                      // Requête GET vers '/api-docs'
       .set('Accept', 'text/html')            // Demander du HTML
       .expect('Content-Type', /html/)        // Vérifier que c'est du HTML
-      .expect(function(res) {                // Fonction personnalisée pour vérifier le statut
+      .end(function(err, res) {
+        if (err) return done(err);
         if (res.status === 200 || res.status === 301) {
-          return true;                       // Accepte 200 (OK) ou 301 (redirection)
+          done();
+        } else {
+          done(new Error('Expected status 200 or 301 for /api-docs'));
         }
-        return false;
-      })
-      .end(done);                            // Terminer le test
+      });
   })
 
   // ========================================
