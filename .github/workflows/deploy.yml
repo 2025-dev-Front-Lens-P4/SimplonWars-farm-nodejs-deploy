@@ -102,14 +102,17 @@ jobs:
         # Créer le dossier de déploiement
         mkdir -p docs
         
-        # Créer la page d'accueil
-        cat > docs/index.html << 'EOF'
+        # Copier l'animation Star Wars pour la page d'accueil
+        cp public/index.html docs/index.html
+        
+        # Créer la page de documentation API
+        cat > docs/api-docs.html << 'EOF'
         <!DOCTYPE html>
         <html lang="fr">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>SimplonWars Farm - API Star Wars</title>
+            <title>SimplonWars Farm - Documentation API</title>
             <style>
                 body {
                     font-family: 'Arial', sans-serif;
@@ -240,7 +243,7 @@ jobs:
                     
                     <div class="endpoint">
                         <span class="method">GET</span> <span class="url">/</span>
-                        <div class="description">Page d'accueil avec la chanson "George Orwell had a farm" version Star Wars</div>
+                        <div class="description">Page d'accueil avec l'animation Star Wars</div>
                     </div>
                     
                     <div class="endpoint">
@@ -255,8 +258,8 @@ jobs:
                 </div>
 
                 <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://github.com/jamtur01/SimplonWars-farm-nodejs" class="cta-button">📁 Voir le Code</a>
-                    <a href="/api-docs" class="cta-button">📚 Documentation API</a>
+                    <a href="https://github.com/2025-dev-Front-Lens-P4/SimplonWars-farm-nodejs-deploy" class="cta-button">📁 Voir le Code</a>
+                    <a href="/" class="cta-button">🏠 Page d'Accueil</a>
                 </div>
 
                 <div class="footer">
@@ -288,7 +291,7 @@ jobs:
         
         ## 📚 Documentation
         
-        Consultez la [documentation API interactive](/api-docs) pour explorer tous les endpoints.
+        Consultez la [documentation API interactive](/api-docs.html) pour explorer tous les endpoints.
         
         ## 🛠️ Technologies
         
