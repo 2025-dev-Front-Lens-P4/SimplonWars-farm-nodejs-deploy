@@ -1,0 +1,312 @@
+# =====================================================
+# GITHUB ACTIONS - DÉPLOIEMENT GITHUB PAGES
+# =====================================================
+#
+# 🌐 QU'EST-CE QUE CE FICHIER ?
+# ------------------------------
+# Ce pipeline automatise le déploiement de votre application sur GitHub Pages.
+# C'est comme un robot qui :
+# 1. Prend votre code
+# 2. Crée une version web statique
+# 3. La publie sur https://votre-username.github.io/votre-repo
+#
+# 🎯 POURQUOI GITHUB PAGES ?
+# ---------------------------
+# GitHub Pages permet de :
+# - Héberger gratuitement votre site web
+# - Avoir une URL publique accessible à tous
+# - Déployer automatiquement à chaque push
+# - Avoir un site professionnel pour votre projet
+#
+# 🔄 COMMENT ÇA MARCHE ?
+# -----------------------
+# 1. Vous poussez du code sur GitHub
+# 2. Le robot crée une version web de votre app
+# 3. Le site est publié sur GitHub Pages
+# 4. Votre app est accessible en ligne !
+
+# Nom du pipeline (apparaît dans l'interface GitHub)
+name: Deploy to GitHub Pages
+
+# 🚀 DÉCLENCHEURS - QUAND DÉPLOYER ?
+# -----------------------------------
+# On définit quand le pipeline doit se déclencher automatiquement
+on:
+  push:
+    branches:
+      - main          # Se déclenche seulement sur la branche principale
+  workflow_run:
+    workflows: ["Tests and Build"]  # Se déclenche après les tests
+    types:
+      - completed
+
+# 🏗️ JOBS - TRAVAUX À EFFECTUER
+# ------------------------------
+jobs:
+  # Job principal : déployer sur GitHub Pages
+  deploy:
+    # 🖥️ ENVIRONNEMENT D'EXÉCUTION
+    # -----------------------------
+    # On utilise Ubuntu pour le déploiement
+    runs-on: ubuntu-latest
+    
+    # 📋 CONDITIONS D'EXÉCUTION
+    # --------------------------
+    # On ne déploie que si les tests ont réussi
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
+    
+    # 📋 ÉTAPES - ACTIONS À EFFECTUER
+    # --------------------------------
+    steps:
+    
+    # ÉTAPE 1 : RÉCUPÉRER LE CODE
+    # ----------------------------
+    # On télécharge le code depuis GitHub
+    - name: Checkout
+      uses: actions/checkout@v4
+      
+    # ÉTAPE 2 : CONFIGURER NODE.JS
+    # -----------------------------
+    # On installe Node.js pour pouvoir tester l'application
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'        # Version de Node.js à utiliser
+        cache: 'npm'              # Cache les dépendances npm
+        
+    # ÉTAPE 3 : INSTALLER LES DÉPENDANCES
+    # ------------------------------------
+    # On installe toutes les dépendances du projet
+    - name: Install dependencies
+      run: npm ci                  # Installation propre des dépendances
+      
+    # ÉTAPE 4 : LANCER LES TESTS
+    # ---------------------------
+    # On s'assure que tout fonctionne avant le déploiement
+    - name: Run tests
+      run: npm test               # Lance tous les tests
+      
+    # ÉTAPE 5 : CRÉER LE SITE STATIQUE
+    # ---------------------------------
+    # On crée une version web de l'application
+    - name: Create static site
+      run: |
+        # Créer le dossier de déploiement
+        mkdir -p docs
+        
+        # Créer la page d'accueil
+        cat > docs/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="fr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>SimplonWars Farm - API Star Wars</title>
+            <style>
+                body {
+                    font-family: 'Arial', sans-serif;
+                    max-width: 800px;
+                    margin: 0 auto;
+                    padding: 20px;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    min-height: 100vh;
+                }
+                .container {
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 30px;
+                    border-radius: 15px;
+                    backdrop-filter: blur(10px);
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                }
+                h1 {
+                    text-align: center;
+                    color: #FFD700;
+                    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+                    margin-bottom: 30px;
+                }
+                .api-section {
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 20px;
+                    margin: 20px 0;
+                    border-radius: 10px;
+                    border-left: 4px solid #FFD700;
+                }
+                .endpoint {
+                    background: rgba(0, 0, 0, 0.3);
+                    padding: 15px;
+                    margin: 10px 0;
+                    border-radius: 8px;
+                    font-family: 'Courier New', monospace;
+                }
+                .method {
+                    color: #4CAF50;
+                    font-weight: bold;
+                }
+                .url {
+                    color: #2196F3;
+                }
+                .description {
+                    margin-top: 10px;
+                    font-style: italic;
+                }
+                .star-wars-intro {
+                    text-align: center;
+                    margin: 30px 0;
+                    padding: 20px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 10px;
+                }
+                .logo {
+                    font-size: 2em;
+                    color: #FFD700;
+                    margin-bottom: 20px;
+                }
+                .cta-button {
+                    display: inline-block;
+                    background: #FFD700;
+                    color: #333;
+                    padding: 15px 30px;
+                    text-decoration: none;
+                    border-radius: 25px;
+                    font-weight: bold;
+                    margin: 10px;
+                    transition: transform 0.3s ease;
+                }
+                .cta-button:hover {
+                    transform: scale(1.05);
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid rgba(255, 255, 255, 0.3);
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="star-wars-intro">
+                    <div class="logo">🌟</div>
+                    <h1>SimplonWars Farm</h1>
+                    <p><strong>API Star Wars pour la formation Dev FRONT LENS P4</strong></p>
+                    <p>Une API REST qui combine la ferme d'animaux classique avec l'univers Star Wars !</p>
+                </div>
+
+                <div class="api-section">
+                    <h2>🚀 API Endpoints</h2>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api</span>
+                        <div class="description">Récupère tous les animaux Star Wars et leurs sons</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api/random</span>
+                        <div class="description">Retourne un animal Star Wars aléatoire avec son son et sa planète</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api/random/{count}</span>
+                        <div class="description">Retourne plusieurs animaux aléatoires (1-10 maximum)</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api/planet/{planetName}</span>
+                        <div class="description">Récupère tous les animaux d'une planète spécifique</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api/stats</span>
+                        <div class="description">Retourne des statistiques sur les animaux et planètes</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api/search/{query}</span>
+                        <div class="description">Recherche un animal par nom (recherche partielle)</div>
+                    </div>
+                </div>
+
+                <div class="api-section">
+                    <h2>🎬 Pages Spéciales</h2>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/</span>
+                        <div class="description">Page d'accueil avec la chanson "George Orwell had a farm" version Star Wars</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/starwars</span>
+                        <div class="description">Animation Star Wars avec l'intro de la formation Dev FRONT LENS P4</div>
+                    </div>
+                    
+                    <div class="endpoint">
+                        <span class="method">GET</span> <span class="url">/api-docs</span>
+                        <div class="description">Documentation interactive Swagger de l'API</div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://github.com/jamtur01/SimplonWars-farm-nodejs" class="cta-button">📁 Voir le Code</a>
+                    <a href="/api-docs" class="cta-button">📚 Documentation API</a>
+                </div>
+
+                <div class="footer">
+                    <p>🌟 Développé par l'équipe <strong>Dev FRONT LENS P4</strong> 🌟</p>
+                    <p>Formation Simplon - 2025</p>
+                    <p>Déployé automatiquement avec GitHub Actions</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+        
+        # Créer un fichier README pour GitHub Pages
+        cat > docs/README.md << 'EOF'
+        # SimplonWars Farm - API Star Wars
+        
+        ## 🌟 À propos
+        
+        Cette API combine la ferme d'animaux classique avec l'univers Star Wars pour la formation Dev FRONT LENS P4.
+        
+        ## 🚀 Fonctionnalités
+        
+        - API REST complète avec documentation Swagger
+        - Animaux Star Wars avec leurs sons et planètes
+        - Animation Star Wars interactive
+        - Tests automatisés
+        - Déploiement CI/CD avec GitHub Actions
+        - Containerisation Docker
+        
+        ## 📚 Documentation
+        
+        Consultez la [documentation API interactive](/api-docs) pour explorer tous les endpoints.
+        
+        ## 🛠️ Technologies
+        
+        - Node.js & Express
+        - Swagger pour la documentation
+        - Docker pour la containerisation
+        - GitHub Actions pour le CI/CD
+        - Mocha & Supertest pour les tests
+        
+        ---
+        
+        *Développé par l'équipe Dev FRONT LENS P4 - Formation Simplon 2025*
+        EOF
+        
+        echo "✅ Site statique créé avec succès !"
+        
+    # ÉTAPE 6 : DÉPLOYER SUR GITHUB PAGES
+    # ------------------------------------
+    # On publie le site sur GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'  # Seulement sur la branche main
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}  # Token automatique GitHub
+        publish_dir: ./docs                        # Dossier à publier
+        force_orphan: true                         # Forcer la création d'une nouvelle branche
+        user_name: 'github-actions[bot]'           # Nom de l'utilisateur pour les commits
+        user_email: 'github-actions[bot]@users.noreply.github.com'  # Email pour les commits
+        commit_message: '🚀 Deploy to GitHub Pages'  # Message de commit 
