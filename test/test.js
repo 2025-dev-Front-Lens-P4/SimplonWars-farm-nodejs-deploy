@@ -147,11 +147,11 @@ describe('GET', function(){
 
   // Test de la présence du nom de l'équipe
   // On vérifie que la page contient bien "Dev FRONT LENS P4"
-  it('/starwars contains Dev FRONT LENS P4', function(done){
+  it('/starwars contains DEV FRONT END LENS P4', function(done){
     request
       .get('/starwars')                      // Requête GET vers '/starwars'
       .set('Accept', 'text/html')            // Demander du HTML
-      .expect(200, /Dev FRONT LENS P4/ig, done);  // Vérifier que le texte contient le nom de l'équipe
+      .expect(200, /DEV FRONT END LENS P4/ig, done);  // Vérifier que le texte contient le nom de l'équipe
   })
 
   // Test avancé : vérification de l'animation Star Wars
