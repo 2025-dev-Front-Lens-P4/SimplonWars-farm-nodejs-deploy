@@ -38,7 +38,7 @@ const swaggerJsdoc = require('swagger-jsdoc');    // Génération de la document
 // ----------------------------------------------
 // Le port sur lequel notre serveur va écouter
 // Si la variable d'environnement PORT existe, on l'utilise, sinon on utilise 8080
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8082;
 
 // 🐾 BASE DE DONNÉES DES ANIMAUX STAR WARS
 // -----------------------------------------
