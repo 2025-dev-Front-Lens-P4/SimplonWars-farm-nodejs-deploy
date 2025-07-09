@@ -12,9 +12,9 @@
 # ÉTAPE 1 : CHOISIR L'IMAGE DE BASE
 # ---------------------------------
 # On commence par choisir une "image de base" qui contient déjà
-# Node.js version 14. C'est comme partir d'un ordinateur qui a déjà
+# Node.js version 22 (LTS). C'est comme partir d'un ordinateur qui a déjà
 # Node.js installé, au lieu de partir de zéro.
-FROM node:14
+FROM node:22-alpine
 
 # ÉTAPE 2 : CRÉER ET DÉFINIR LE DOSSIER DE TRAVAIL
 # ------------------------------------------------
@@ -35,7 +35,7 @@ COPY package*.json ./
 # On installe toutes les bibliothèques dont notre application a besoin
 # (comme Express.js, Underscore, etc.). C'est comme installer des
 # applications sur votre téléphone.
-RUN npm install
+RUN npm ci --only=production
 
 # ÉTAPE 5 : COPIER TOUT LE CODE DE L'APPLICATION
 # ----------------------------------------------

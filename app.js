@@ -120,6 +120,7 @@ const app = express();
 // NOTE: On ne sert pas index.html automatiquement pour éviter les conflits avec la route principale
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
 app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
+app.use('/assets', express.static(path.join(__dirname, 'public/assets'))); // Ajout pour servir les sons
 
 // 📚 CONFIGURATION SWAGGER
 // -------------------------
