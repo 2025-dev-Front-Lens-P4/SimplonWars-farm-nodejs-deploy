@@ -157,22 +157,10 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
  * 🏠 ROUTE PRINCIPALE - PAGE D'ACCUEIL
  * ------------------------------------
  * Quand quelqu'un visite http://localhost:8080/
- * On affiche une ferme d'animaux Star Wars avec un animal aléatoire
- * 
- * Format : "Old MacDonald had a farm" mais version Star Wars !
+ * On affiche l'animation Star Wars (même contenu que /starwars)
  */
 app.get('/', function(req, res){
-  const [animal_name, sound] = getAnimal();  // On récupère un animal aléatoire
-  res.writeHead(200, { 'Content-Type': 'text/html' });  // On dit que c'est du HTML
-  res.write(`George Orwell had a farm.<br />
-E-I-E-I-O<br />
-And on his farm he had a ${ animal_name }.<br />
-E-I-E-I-O<br />
-With a ${ sound }-${ sound } here.<br />
-And a ${ sound }-${ sound } there.<br />
-Here a ${ sound }, there a ${ sound }.<br />
-Everywhere a ${ sound }-${ sound }.<br />`);
-      res.end();
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 /**

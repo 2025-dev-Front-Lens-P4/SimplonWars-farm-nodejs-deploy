@@ -67,21 +67,20 @@ describe('GET', function(){
   })
 
   // Test du contenu de la page d'accueil
-  // On vérifie que la page contient bien le texte "George Orwell had a farm" ou l'animation Star Wars
-  it('respond with George Orwell', function(done){
+  // On vérifie que la page contient bien l'animation Star Wars
+  it('respond with Star Wars animation', function(done){
     request
       .get('/')                    // Requête GET vers '/' (page d'accueil)
       .set('Accept', 'text/html')  // Demander du HTML
       .expect(200)                 // Vérifier le code 200
       .end(function(err, res) {
         if (err) return done(err);
-        // Accepte le texte George Orwell ou la présence de l'animation Star Wars
-        const hasGeorgeOrwell = /George Orwell had a farm/ig.test(res.text);
+        // Vérifie la présence de l'animation Star Wars
         const hasStarWars = /star-wars-intro/ig.test(res.text);
-        if (hasGeorgeOrwell || hasStarWars) {
+        if (hasStarWars) {
           done();
         } else {
-          done(new Error('Page d\'accueil ne contient ni George Orwell ni Star Wars'));
+          done(new Error('Page d\'accueil ne contient pas l\'animation Star Wars'));
         }
       });
   })
@@ -155,22 +154,20 @@ describe('GET', function(){
       .expect(200, /Dev FRONT LENS P4/ig, done);  // Vérifier que le texte contient le nom de l'équipe
   })
 
-  // Test avancé : vérification d'un animal Star Wars aléatoire
-  // On vérifie que la page d'accueil contient bien un animal Star Wars ou l'animation
-  it('random animal from / contains Star Wars animal', function(done){
+  // Test avancé : vérification de l'animation Star Wars
+  // On vérifie que la page d'accueil contient bien l'animation Star Wars
+  it('homepage contains Star Wars animation', function(done){
     request
       .get('/')                              // Requête GET vers '/' (page d'accueil)
       .set('Accept', 'text/html')            // Demander du HTML
       .expect(200)                           // Vérifier le code 200
       .end(function(err, res) {
         if (err) return done(err);
-        const starWarsAnimals = ['bantha', 'tauntaun', 'nerf', 'eopie', 'blurrg', 'porg', 'fathier', 'taq', 'reek', 'dewback', 'nunas', 'varactyl', 'happabore'];
-        const hasStarWarsAnimal = starWarsAnimals.some(animal => res.text.includes(animal));
         const isStarWarsPage = /star-wars-intro/ig.test(res.text);
-        if (hasStarWarsAnimal || isStarWarsPage) {
+        if (isStarWarsPage) {
           done();
         } else {
-          done(new Error('No Star Wars animal found in response'));
+          done(new Error('Homepage does not contain Star Wars animation'));
         }
       });
   })
