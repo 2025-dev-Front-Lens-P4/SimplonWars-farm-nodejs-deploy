@@ -117,7 +117,9 @@ const app = express();
 // On dit à Express de servir les fichiers du dossier 'public'
 // Cela permet d'accéder aux fichiers HTML, CSS, images, etc.
 // C'est comme créer un dossier "public" sur un serveur web
-app.use(express.static(path.join(__dirname, 'public')));
+// NOTE: On ne sert pas index.html automatiquement pour éviter les conflits avec la route principale
+app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
 
 // 📚 CONFIGURATION SWAGGER
 // -------------------------
