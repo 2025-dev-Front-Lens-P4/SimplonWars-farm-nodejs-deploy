@@ -1,0 +1,84 @@
+# =====================================================
+# GITHUB ACTIONS - PIPELINE DE TESTS AUTOMATIQUES
+# =====================================================
+#
+# 🎯 QU'EST-CE QUE CE FICHIER ?
+# ------------------------------
+# Ce fichier définit un "pipeline CI/CD" (Intégration Continue / Déploiement Continu).
+# C'est comme un robot qui vérifie automatiquement que votre code fonctionne
+# à chaque fois que vous faites un changement.
+#
+# 🔄 COMMENT ÇA MARCHE ?
+# -----------------------
+# 1. Vous poussez du code sur GitHub (git push)
+# 2. GitHub Actions détecte le changement
+# 3. Le robot lance automatiquement les tests
+# 4. Si les tests passent → tout va bien !
+# 5. Si les tests échouent → il y a un problème à corriger
+#
+# 💡 POURQUOI C'EST UTILE ?
+# --------------------------
+# - Détecte les bugs avant qu'ils arrivent en production
+# - Garantit que le code fonctionne toujours
+# - Évite les "ça marchait sur ma machine"
+# - Améliore la qualité du code
+
+# Nom du pipeline (apparaît dans l'interface GitHub)
+name: Animal Farm Node.js CI
+
+# 🚀 DÉCLENCHEURS - QUAND LANCER LES TESTS ?
+# -------------------------------------------
+# On définit quand le pipeline doit se déclencher automatiquement
+on:
+  push:
+   branches:
+      - main          # Se déclenche quand on pousse sur la branche principale
+  pull_request:
+    branches:
+      - main          # Se déclenche quand on crée une Pull Request vers main
+
+# 🏗️ JOBS - TRAVAUX À EFFECTUER
+# ------------------------------
+# Un "job" est un ensemble d'étapes qui s'exécutent sur un serveur
+jobs:
+  # Job principal : construire et tester l'application
+  build:
+    # 🖥️ ENVIRONNEMENT D'EXÉCUTION
+    # -----------------------------
+    # On choisit sur quel type de serveur exécuter nos tests
+    # ubuntu-latest = dernière version d'Ubuntu (gratuit et fiable)
+    runs-on: ubuntu-latest
+
+    # 📋 ÉTAPES - ACTIONS À EFFECTUER
+    # --------------------------------
+    # Chaque étape est une action spécifique dans notre pipeline
+    steps:
+    
+    # ÉTAPE 1 : RÉCUPÉRER LE CODE
+    # ----------------------------
+    # On télécharge le code depuis GitHub sur le serveur de test
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    # ÉTAPE 2 : INSTALLER NODE.JS
+    # ----------------------------
+    # On installe Node.js sur le serveur de test
+    # C'est nécessaire pour faire tourner notre application JavaScript
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18.x'    # Version de Node.js à utiliser
+        
+    # ÉTAPE 3 : INSTALLER LES DÉPENDANCES
+    # ------------------------------------
+    # On installe toutes les bibliothèques dont notre app a besoin
+    # C'est comme faire "npm install" sur votre machine
+    - name: Install dependencies
+      run: npm install
+      
+    # ÉTAPE 4 : LANCER LES TESTS
+    # ---------------------------
+    # On exécute tous les tests pour vérifier que tout fonctionne
+    # Si un test échoue, le pipeline s'arrête et signale une erreur
+    - name: Run tests
+      run: npm test

@@ -1,0 +1,110 @@
+# =====================================================
+# GITHUB ACTIONS - PIPELINE DOCKER AUTOMATIQUE
+# =====================================================
+#
+# 🐳 QU'EST-CE QUE CE FICHIER ?
+# ------------------------------
+# Ce pipeline automatise la création et la publication d'images Docker.
+# C'est comme un robot qui :
+# 1. Prend votre code
+# 2. Le transforme en "conteneur" (comme une boîte qui contient votre app)
+# 3. Le publie sur des "magasins" en ligne (Docker Hub, GitHub Container Registry)
+#
+# 🎯 POURQUOI DOCKER ?
+# ---------------------
+# Docker permet de "conteneuriser" votre application :
+# - L'app fonctionne partout de la même manière
+# - Plus de "ça marche sur ma machine"
+# - Déploiement facile sur n'importe quel serveur
+# - Isolation : l'app ne perturbe pas le système
+#
+# 🔄 COMMENT ÇA MARCHE ?
+# -----------------------
+# 1. Vous poussez du code sur GitHub
+# 2. Le robot construit automatiquement une image Docker
+# 3. L'image est publiée sur Docker Hub et GitHub Container Registry
+# 4. N'importe qui peut maintenant utiliser votre app avec "docker run"
+
+# Nom du pipeline (apparaît dans l'interface GitHub)
+name: Publish Docker image
+
+# 🚀 DÉCLENCHEURS - QUAND CONSTRUIRE L'IMAGE ?
+# ---------------------------------------------
+# On définit quand le pipeline doit se déclencher automatiquement
+on:
+  push:
+    branches:
+      - main          # Se déclenche seulement sur la branche principale
+
+# 🏗️ JOBS - TRAVAUX À EFFECTUER
+# ------------------------------
+jobs:
+  # Job principal : construire et publier l'image Docker
+  build-and-push:
+    # 🖥️ ENVIRONNEMENT D'EXÉCUTION
+    # -----------------------------
+    # On utilise Ubuntu pour construire l'image Docker
+    runs-on: ubuntu-latest
+    
+    # 📋 ÉTAPES - ACTIONS À EFFECTUER
+    # --------------------------------
+    steps:
+    
+    # ÉTAPE 1 : RÉCUPÉRER LE CODE
+    # ----------------------------
+    # On télécharge le code depuis GitHub
+    - name: Checkout
+      uses: actions/checkout@v2
+      
+    # ÉTAPE 2 : CONFIGURER QEMU
+    # --------------------------
+    # QEMU permet de construire des images pour différents types d'ordinateurs
+    # (Intel, ARM, etc.) avec une seule image Docker
+    # C'est comme créer une version compatible avec tous les téléphones
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+      
+    # ÉTAPE 3 : CONFIGURER DOCKER BUILDX
+    # -----------------------------------
+    # Buildx est une version avancée de Docker qui permet :
+    # - Construire plus vite
+    # - Mieux utiliser le cache
+    # - Construire pour plusieurs architectures
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+      
+    # ÉTAPE 4 : SE CONNECTER À DOCKER HUB
+    # ------------------------------------
+    # Docker Hub est comme un "magasin" d'images Docker
+    # On s'authentifie pour pouvoir publier notre image
+    # Les secrets sont stockés dans les paramètres GitHub du projet
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}    # Nom d'utilisateur Docker Hub
+        password: ${{ secrets.DOCKERHUB_TOKEN }}       # Mot de passe/token Docker Hub
+        
+    # ÉTAPE 5 : SE CONNECTER À GITHUB CONTAINER REGISTRY
+    # --------------------------------------------------
+    # GitHub a aussi son propre "magasin" d'images Docker
+    # On publie sur les deux pour avoir plus de choix
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io                              # Adresse du registre GitHub
+        username: ${{ github.repository_owner }}       # Propriétaire du repo (automatique)
+        password: ${{ secrets.GHRC_TOKEN }}            # Token GitHub Container Registry
+        
+    # ÉTAPE 6 : CONSTRUIRE ET PUBLIER L'IMAGE
+    # ----------------------------------------
+    # C'est l'étape principale : on construit l'image et on la publie
+    # L'image aura plusieurs "étiquettes" pour les différents registres
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        context: .                                     # Dossier contenant le code
+        file: ./Dockerfile                             # Fichier de recette Docker
+        push: true                                     # Publier l'image (pas juste la construire)
+        tags: |                                        # Étiquettes pour identifier l'image
+          jamtur01/simplonwars-farm-nodejs:latest           # Étiquette Docker Hub
+          ghcr.io/jamtur01/simplonwars-farm-nodejs:latest   # Étiquette GitHub Container Registry

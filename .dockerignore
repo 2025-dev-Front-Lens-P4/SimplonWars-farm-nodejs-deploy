@@ -1,0 +1,75 @@
+# =====================================================
+# .DOCKERIGNORE - FICHIER D'EXCLUSION DOCKER
+# =====================================================
+#
+# Qu'est-ce que .dockerignore ?
+# Ce fichier fonctionne comme .gitignore mais pour Docker.
+# Il dit à Docker : "Ne copie PAS ces fichiers dans l'image".
+# Cela permet de :
+# - Réduire la taille de l'image finale
+# - Accélérer le processus de construction
+# - Éviter de copier des fichiers inutiles ou sensibles
+#
+# Pourquoi c'est important ?
+# Plus l'image Docker est petite, plus elle se télécharge et démarre vite !
+
+# EXCLUSIONS OBLIGATOIRES
+# ------------------------
+
+# Dossier node_modules (OBLIGATOIRE)
+# ----------------------------------
+# Ce dossier contient toutes les bibliothèques installées par npm.
+# On l'exclut car on va réinstaller les dépendances dans le conteneur.
+# C'est plus propre et plus sûr !
+node_modules
+
+# EXCLUSIONS GIT
+# --------------
+# Fichiers liés à Git (gestion de versions)
+.git          # Dossier contenant l'historique Git
+.gitignore    # Fichier d'exclusion Git
+
+# EXCLUSIONS DOCUMENTATION
+# ------------------------
+# Fichiers de documentation (pas nécessaires pour faire tourner l'app)
+README.md     # Documentation du projet
+*.md          # Tous les fichiers Markdown
+
+# EXCLUSIONS TESTS
+# ----------------
+# Fichiers de tests (pas nécessaires en production)
+test/         # Dossier contenant les tests
+coverage/     # Rapports de couverture de tests
+
+# EXCLUSIONS CONFIGURATION DÉVELOPPEMENT
+# --------------------------------------
+# Fichiers de configuration spécifiques au développement
+.env          # Variables d'environnement locales
+.env.local    # Variables d'environnement locales
+.env.development  # Variables d'environnement de développement
+
+# EXCLUSIONS ÉDITEURS DE CODE
+# ---------------------------
+# Fichiers créés par les éditeurs de code (VS Code, IntelliJ, etc.)
+.vscode/      # Configuration VS Code
+.idea/        # Configuration IntelliJ
+*.swp         # Fichiers temporaires Vim
+*.swo         # Fichiers temporaires Vim
+
+# EXCLUSIONS SYSTÈME
+# ------------------
+# Fichiers créés automatiquement par le système d'exploitation
+.DS_Store     # Fichier macOS
+Thumbs.db     # Fichier Windows
+
+# EXCLUSIONS LOGS
+# ---------------
+# Fichiers de logs (journaux d'événements)
+*.log         # Tous les fichiers de logs
+logs/         # Dossier de logs
+
+# EXCLUSIONS TEMPORAIRES
+# ----------------------
+# Fichiers temporaires
+tmp/          # Dossier temporaire
+temp/         # Dossier temporaire
