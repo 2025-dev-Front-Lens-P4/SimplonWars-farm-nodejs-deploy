@@ -324,3 +324,4 @@ jobs:
         # Configuration de sécurité pour éviter les erreurs 403
         enable_jekyll: false                       # Désactiver Jekyll (pas nécessaire pour un site statique)
         cname: ''                                  # Pas de domaine personnalisé 
+        
