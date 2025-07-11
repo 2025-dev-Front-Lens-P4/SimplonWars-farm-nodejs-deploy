@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SimplonWars - Star Wars Intro</title>
   <link rel="stylesheet" href="./css/style.css">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'starwars-yellow': '#EBD71C',
+            'starwars-blue': '#4ee',
+            'starwars-dark': '#000000'
+          }
+        }
+      }
+    }
+  </script>
 </head>
 
-<body>
+<body class="bg-black text-white min-h-screen">
     <!-- 🎵 AUDIO STAR WARS - AUTOPLAY -->
     <audio id="starWarsAudio" preload="auto" loop>
       <source src="./assets/sound/Star_Wars_Main_Theme_Song.mp3" type="audio/mpeg">
@@ -21,37 +36,180 @@
       </button>
     </div>
 
-    <div class="star-wars-intro">
-      <p class="intro-text">
-        Il y a bien longtemps, dans une galaxie lointaine,
-        très lointaine...
-      </p>
+    <!-- HEADER -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-sm border-b border-starwars-yellow/20">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center space-x-3">
+          <img src="./assets/images/SimponWars.png" alt="SimplonWars" class="h-8 w-auto">
+          <h1 class="text-starwars-yellow font-bold text-lg">SimplonWars</h1>
+        </div>
 
-      <h2 class="main-logo">
-        <img src="./assets/images/SimponWars.png" alt="SimplonWars Logo">
-      </h2>
+        <!-- Navigation Desktop -->
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="/" class="text-white hover:text-starwars-yellow transition-colors">Accueil</a>
+          <a href="/starwars" class="text-white hover:text-starwars-yellow transition-colors">Animation</a>
+          <a href="/api" class="text-white hover:text-starwars-yellow transition-colors">API</a>
+          <a href="/api-docs" class="text-white hover:text-starwars-yellow transition-colors">Documentation</a>
+        </nav>
 
-      <div class="main-content">
-        <div class="title-content">
-          <div class="content-header">
-            <h1>DEV FRONT END LENS P4</h1>
-            <h2>UN NOUVEL ESPOIR</h2>
+        <!-- Menu Mobile Button -->
+        <button id="mobileMenuBtn" class="md:hidden text-white hover:text-starwars-yellow transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- SIDEBAR NAVIGATION -->
+    <div id="sidebar" class="fixed top-0 left-0 h-full w-64 bg-black/95 backdrop-blur-sm transform -translate-x-full transition-transform duration-300 ease-in-out z-40 border-r border-starwars-yellow/20">
+      <div class="p-6">
+        <!-- Sidebar Header -->
+        <div class="flex items-center justify-between mb-8">
+          <div class="flex items-center space-x-3">
+            <img src="./assets/images/SimponWars.png" alt="SimplonWars" class="h-8 w-auto">
+            <h2 class="text-starwars-yellow font-bold">Menu</h2>
           </div>
-          <p>
-            C'est une époque de guerre… de bugs et de merge conflicts. Depuis leur base secrète à la Louvre Lens Vallée, de vaillants développeurs rebelles issus de la formation Simplon affrontent les forces obscures du CSS mal indenté et du JavaScript capricieux.
-          </p>
-          <p>
-            Lors d'une ultime bataille de débogage, les stagiaires ont réussi à subtiliser les plans secrets de l'arme absolue de l'Empire : la Pipeline de la Mort, une GitHub Action démoniaque capable de déployer automatiquement un site plein de bugs, sans même un `npm test`.
-          </p>
-          <p>
-            Pour sauver la prod, Luc Skybuildwalker, jeune dev en quête de sens et de pixels alignés, fuit à bord de son vaisseau-clé USB, guidé par Maître Yass-Wan Kenobi, mentor légendaire du commit propre et du déploiement sans panique.
-          </p>
-          <p>
-            Traqués par les bots de l'Empire (et par ESLint en mode ultra-strict), nos héros espèrent livrer à temps leur application responsive, pushée en continu, et capable de restaurer l'équilibre dans la galaxie du Front-End…
-          </p>
+          <button id="closeSidebar" class="text-white hover:text-starwars-yellow transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="space-y-4">
+          <a href="/" class="block text-white hover:text-starwars-yellow transition-colors py-2 px-4 rounded-lg hover:bg-white/10">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+              </svg>
+              <span>Accueil</span>
+            </div>
+          </a>
+          
+          <a href="/starwars" class="block text-white hover:text-starwars-yellow transition-colors py-2 px-4 rounded-lg hover:bg-white/10">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Animation Star Wars</span>
+            </div>
+          </a>
+          
+          <a href="/api" class="block text-white hover:text-starwars-yellow transition-colors py-2 px-4 rounded-lg hover:bg-white/10">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+              <span>API REST</span>
+            </div>
+          </a>
+          
+          <a href="/api-docs" class="block text-white hover:text-starwars-yellow transition-colors py-2 px-4 rounded-lg hover:bg-white/10">
+            <div class="flex items-center space-x-3">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <span>Documentation</span>
+            </div>
+          </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="absolute bottom-6 left-6 right-6">
+          <div class="text-center text-sm text-gray-400">
+            <p>Dev FRONT LENS P4</p>
+            <p class="text-starwars-yellow">Simplon Formation</p>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- OVERLAY pour fermer le sidebar -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-16">
+      <div class="star-wars-intro">
+        <p class="intro-text">
+          Il y a bien longtemps, dans une galaxie lointaine,
+          très lointaine...
+        </p>
+
+        <h2 class="main-logo">
+          <img src="./assets/images/SimponWars.png" alt="SimplonWars Logo">
+        </h2>
+
+        <div class="main-content">
+          <div class="title-content">
+            <div class="content-header">
+              <h1>DEV FRONT END LENS P4</h1>
+              <h2>UN NOUVEL ESPOIR</h2>
+            </div>
+            <p>
+              C'est une époque de guerre… de bugs et de merge conflicts. Depuis leur base secrète à la Louvre Lens Vallée, de vaillants développeurs rebelles issus de la formation Simplon affrontent les forces obscures du CSS mal indenté et du JavaScript capricieux.
+            </p>
+            <p>
+              Lors d'une ultime bataille de débogage, les stagiaires ont réussi à subtiliser les plans secrets de l'arme absolue de l'Empire : la Pipeline de la Mort, une GitHub Action démoniaque capable de déployer automatiquement un site plein de bugs, sans même un `npm test`.
+            </p>
+            <p>
+              Pour sauver la prod, Luc Skybuildwalker, jeune dev en quête de sens et de pixels alignés, fuit à bord de son vaisseau-clé USB, guidé par Maître Yass-Wan Kenobi, mentor légendaire du commit propre et du déploiement sans panique.
+            </p>
+            <p>
+              Traqués par les bots de l'Empire (et par ESLint en mode ultra-strict), nos héros espèrent livrer à temps leur application responsive, pushée en continu, et capable de restaurer l'équilibre dans la galaxie du Front-End…
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-black/90 backdrop-blur-sm border-t border-starwars-yellow/20 mt-20">
+      <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Logo et Description -->
+          <div class="text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start space-x-3 mb-4">
+              <img src="./assets/images/SimponWars.png" alt="SimplonWars" class="h-10 w-auto">
+              <h3 class="text-starwars-yellow font-bold text-xl">SimplonWars</h3>
+            </div>
+            <p class="text-gray-400 text-sm">
+              Une application Node.js complète avec animation Star Wars, API REST et documentation interactive.
+            </p>
+          </div>
+
+          <!-- Liens Rapides -->
+          <div class="text-center">
+            <h4 class="text-starwars-yellow font-semibold mb-4">Liens Rapides</h4>
+            <div class="space-y-2">
+              <a href="/" class="block text-gray-400 hover:text-starwars-yellow transition-colors text-sm">Accueil</a>
+              <a href="/starwars" class="block text-gray-400 hover:text-starwars-yellow transition-colors text-sm">Animation</a>
+              <a href="/api" class="block text-gray-400 hover:text-starwars-yellow transition-colors text-sm">API</a>
+              <a href="/api-docs" class="block text-gray-400 hover:text-starwars-yellow transition-colors text-sm">Documentation</a>
+            </div>
+          </div>
+
+          <!-- Contact -->
+          <div class="text-center md:text-right">
+            <h4 class="text-starwars-yellow font-semibold mb-4">Équipe</h4>
+            <div class="space-y-2 text-sm text-gray-400">
+              <p>Dev FRONT LENS P4</p>
+              <p>Simplon Formation</p>
+              <p>Lens, France</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-gray-800 mt-8 pt-6 text-center">
+          <p class="text-gray-500 text-sm">
+            © 2025 SimplonWars. Tous droits réservés. Que la Force soit avec vous ! 🎬
+          </p>
+        </div>
+      </div>
+    </footer>
 
     <script>
       // Audio control functionality
@@ -109,6 +267,36 @@
       // Additional attempts on user interaction
       document.addEventListener('mousemove', startAudio, { once: true });
       document.addEventListener('scroll', startAudio, { once: true });
+
+      // Sidebar Navigation
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const closeSidebar = document.getElementById('closeSidebar');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+      // Ouvrir le sidebar
+      mobileMenuBtn.addEventListener('click', function() {
+        sidebar.classList.remove('-translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      });
+
+      // Fermer le sidebar
+      function closeSidebarMenu() {
+        sidebar.classList.add('-translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+
+      closeSidebar.addEventListener('click', closeSidebarMenu);
+      sidebarOverlay.addEventListener('click', closeSidebarMenu);
+
+      // Fermer avec la touche Escape
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeSidebarMenu();
+        }
+      });
     </script>
 </body>
 </html>
