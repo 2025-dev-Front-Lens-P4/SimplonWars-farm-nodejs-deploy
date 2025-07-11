@@ -182,7 +182,7 @@ body, html{
 /* 🎵 STYLES POUR LES CONTRÔLES AUDIO */
 .audio-controls {
   position: fixed;
-  top: 20px;
+  top: 80px;
   right: 20px;
   z-index: 1000;
 }

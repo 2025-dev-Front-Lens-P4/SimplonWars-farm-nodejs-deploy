@@ -22,7 +22,7 @@
   </script>
 </head>
 
-<body class="bg-black text-white min-h-screen">
+<body class="bg-black text-white min-h-screen flex flex-col">
     <!-- 🎵 AUDIO STAR WARS - AUTOPLAY -->
     <audio id="starWarsAudio" preload="auto" loop>
       <source src="./assets/sound/Star_Wars_Main_Theme_Song.mp3" type="audio/mpeg">
@@ -131,7 +131,7 @@
     <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-30 hidden"></div>
 
     <!-- MAIN CONTENT -->
-    <main class="pt-16">
+    <main class="flex-1 pt-16">
       <div class="star-wars-intro">
         <p class="intro-text">
           Il y a bien longtemps, dans une galaxie lointaine,
@@ -166,7 +166,7 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-black/90 backdrop-blur-sm border-t border-starwars-yellow/20 mt-20">
+    <footer class="bg-black/90 backdrop-blur-sm border-t border-starwars-yellow/20 mt-auto">
       <div class="container mx-auto px-4 py-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <!-- Logo et Description -->
